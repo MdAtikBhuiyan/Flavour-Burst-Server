@@ -33,8 +33,13 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
+        // all products
         const database = client.db('allBrandProducts');
         const productCollection = database.collection('products')
+
+        // cart products
+        const cartCollection = database.collection('cartItems')
+
 
         // sepecific brnad products get data
         app.get('/products/:brand', async (req, res) => {
@@ -57,7 +62,7 @@ async function run() {
             res.send(result)
         })
 
-        // insert 
+        // add product 
         app.post('/products', async (req, res) => {
             const product = req.body;
             // console.log(products);
@@ -65,6 +70,25 @@ async function run() {
             res.send(result)
         })
 
+        // cart product
+        app.post('/addCart', async (req, res) => {
+            const product = req.body;
+            // console.log('tt', product);
+            const result = await cartCollection.insertOne(product)
+            res.send(result);
+
+        })
+        // get cart product
+        app.get('/addCart/:user', async (req, res) => {
+            const userId = req.params.user
+            const cursor = cartCollection.find()
+            const result = await cursor.toArray()
+
+            const userBasedItem = result.filter(item => item.uid == userId)
+            console.log(userBasedItem);
+            res.send(userBasedItem)
+            
+        })
 
 
         // Send a ping to confirm a successful connection
@@ -75,6 +99,7 @@ async function run() {
         // await client.close();
     }
 }
+
 run().catch(console.dir);
 
 
