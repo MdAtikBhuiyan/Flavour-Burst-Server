@@ -36,9 +36,15 @@ async function run() {
         const database = client.db('allBrandProducts');
         const productCollection = database.collection('products')
 
-        app.post('/brandProducts', async (req, res) => {
-            const products = req.params.body()
-            console.log(products);
+        // // get data
+        // app.get
+
+        // insert 
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            // console.log(products);
+            const result = await productCollection.insertOne(product)
+            res.send(result)
         })
 
 
@@ -65,7 +71,3 @@ app.listen(port, () => {
     console.log(`The Flavour Burst server is running on port: ${port}`)
 })
 
-// node modules
-app.get('/a', (req, res) => {
-    res.send('Hello World!')
-})
