@@ -64,3 +64,8 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`The Flavour Burst server is running on port: ${port}`)
 })
+
+// node modules
+app.get('/a', (req, res) => {
+    res.send('Hello World!')
+})
