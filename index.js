@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const cors = require('cors')
 
@@ -36,10 +36,24 @@ async function run() {
         const database = client.db('allBrandProducts');
         const productCollection = database.collection('products')
 
-        // // get data
-        app.get('/products', async (req, res) => {
+        // sepecific brnad products get data
+        app.get('/products/:brand', async (req, res) => {
+            const brand = req.params.brand.toLowerCase();
             const cursor = productCollection.find()
-            const result = await cursor.toArray()
+            const result = await cursor.toArray();
+            // console.log(brand, 'aaaaa');
+
+            const brandsProduct = result.filter(product => product.brandName.replace(/\s+/g, '-').toLowerCase() == brand)
+            res.send(brandsProduct)
+        })
+
+        // signle product
+        app.get('/products/:brand/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const query = { _id: new ObjectId(id) };
+            const result = await productCollection.findOne(query);
+
             res.send(result)
         })
 
