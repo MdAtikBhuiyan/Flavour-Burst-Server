@@ -33,7 +33,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         // database all products
         const database = client.db('allBrandProducts');
@@ -48,7 +48,7 @@ async function run() {
             const brand = req.params.brand.toLowerCase();
             const cursor = productCollection.find()
             const result = await cursor.toArray();
-            // console.log(brand, 'aaaaa');
+            console.log(brand, 'aaaaa');
 
             const brandsProduct = result?.filter(product => product.brandName.replace(/\s+/g, '-').toLowerCase() == brand)
             res.send(brandsProduct)
