@@ -33,11 +33,11 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        // all products
+        // database all products
         const database = client.db('allBrandProducts');
         const productCollection = database.collection('products')
 
-        // cart products
+        // database cart products
         const cartCollection = database.collection('cartItems')
 
 
@@ -70,6 +70,32 @@ async function run() {
             res.send(result)
         })
 
+        // update product
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const data = req.body;
+
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+
+            const updatedProduct = {
+                $set: {
+                    brandName: data.brandName,
+                    image: data.image,
+                    title: data.title,
+                    price: data.price,
+                    rating: data.rating,
+                    details: data.details,
+                    type: data.type,
+                }
+            }
+
+            const result = await productCollection.updateOne(filter, updatedProduct, options);
+            res.send(result)
+
+        })
+
+
         // cart product
         app.post('/addCart', async (req, res) => {
             const product = req.body;
@@ -85,10 +111,19 @@ async function run() {
             const result = await cursor.toArray()
 
             const userBasedItem = result.filter(item => item.uid == userId)
-            console.log(userBasedItem);
+            // console.log(userBasedItem);
             res.send(userBasedItem)
-            
+
         })
+
+        // delete to cart
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await cartCollection.deleteOne(query);
+            res.send(result)
+        })
+
 
 
         // Send a ping to confirm a successful connection
