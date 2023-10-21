@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express()
+require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const cors = require('cors')
@@ -17,7 +18,8 @@ app.use(express.json())
 
 // database
 
-const uri = "mongodb+srv://asn-10-flavour-burst:7eQO8bYhuW8Zuj9a@cluster0.bbvd3eh.mongodb.net/?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://asn-10-flavour-burst:7eQO8bYhuW8Zuj9a@cluster0.bbvd3eh.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bbvd3eh.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -48,7 +50,7 @@ async function run() {
             const result = await cursor.toArray();
             // console.log(brand, 'aaaaa');
 
-            const brandsProduct = result.filter(product => product.brandName.replace(/\s+/g, '-').toLowerCase() == brand)
+            const brandsProduct = result?.filter(product => product.brandName.replace(/\s+/g, '-').toLowerCase() == brand)
             res.send(brandsProduct)
         })
 
@@ -110,7 +112,7 @@ async function run() {
             const cursor = cartCollection.find()
             const result = await cursor.toArray()
 
-            const userBasedItem = result.filter(item => item.uid == userId)
+            const userBasedItem = result?.filter(item => item.uid == userId)
             // console.log(userBasedItem);
             res.send(userBasedItem)
 
